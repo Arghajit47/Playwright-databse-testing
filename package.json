@@ -1,0 +1,22 @@
+{
+  "name": "database-testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "teardown": "node teardown.js",
+    "test": "npm run setup && npx playwright test --grep @database && npm run teardown"
+  },
+  "keywords": [],
+  "author": "Arghajit",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "pg": "^8.13.1"
+  }
+}
