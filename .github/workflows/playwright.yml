@@ -1,28 +1,73 @@
 name: Playwright Database Testing
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
+    # Checkout code
     - uses: actions/checkout@v4
+    - name: Set up PostgreSQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql postgresql-contrib
+        sudo service postgresql start
+        psql -U postgres -c "CREATE DATABASE dummy_db;"
+
+    # Set up Node.js
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
+    # Install dependencies
     - name: Install dependencies
       run: npm ci
+
+    # Install Playwright browsers
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install
+
+    # Set up environment variables
+    - name: Set Environment Variables
+      run: echo "DB_USER=${{ secrets.DB_USER }}\nDB_HOST=${{ secrets.DB_HOST }}\nDB_NAME=${{ secrets.DB_NAME }}\nDB_PASSWORD=${{ secrets.DB_PASSWORD }}\nDB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+
+    # Create database tables and seed data
     - name: Creates data tables and inserts data into tables
-      run: npm run setup      
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_PORT: ${{ secrets.DB_PORT }}  
+      run: npm run setup
+
+    # Run Playwright tests
     - name: Run Playwright tests
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_PORT: ${{ secrets.DB_PORT }}  
       run: npx playwright test
+
+    # Tear down database tables and data
     - name: Deletes the data table and their data
-      run: npm run teardown      
+      env:
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_PORT: ${{ secrets.DB_PORT }}  
+      run: npm run teardown
+
+    # Upload Playwright test reports
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
