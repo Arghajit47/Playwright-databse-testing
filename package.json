@@ -6,7 +6,7 @@
   "scripts": {
     "setup": "node setup.js",
     "teardown": "node teardown.js",
-    "test": "npm run setup && npx playwright test --grep @database && npm run teardown"
+    "test": "npx playwright test --grep @database"
   },
   "keywords": [],
   "author": "Arghajit",

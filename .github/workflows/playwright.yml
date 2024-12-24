@@ -18,11 +18,11 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Creates data tables and inserts data into tables
-      run: npm run setup.js      
+      run: npm run setup      
     - name: Run Playwright tests
       run: npx playwright test
     - name: Deletes the data table and their data
-      run: npm run teardown.js      
+      run: npm run teardown      
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
