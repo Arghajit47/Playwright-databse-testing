@@ -13,6 +13,12 @@ jobs:
     steps:
     # Checkout code
     - uses: actions/checkout@v4
+    - name: Set up PostgreSQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y postgresql postgresql-contrib
+        sudo service postgresql start
+        psql -U postgres -c "CREATE DATABASE dummy_db;"
 
     # Set up Node.js
     - uses: actions/setup-node@v4
