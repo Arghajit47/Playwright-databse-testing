@@ -1,9 +1,9 @@
 const { test, expect } = require("@playwright/test");
 const { runQuery } = require("../utils/dbUtils");
-const insertSqlQuery = require("../testData/insertSql");
-const updateSqlQuery = require("../testData/updateSql");
-const selectSqlQuery = require("../testData/selectSql");
-const deleteSqlQuery = require("../testData/deleteSql");
+const insertSqlQuery = require("../sqlQueries/insertSql");
+const updateSqlQuery = require("../sqlQueries/updateSql");
+const selectSqlQuery = require("../sqlQueries/selectSql");
+const deleteSqlQuery = require("../sqlQueries/deleteSql");
 
 test.describe.configure({ mode: "serial" }); // Ensures tests run one by one
 
