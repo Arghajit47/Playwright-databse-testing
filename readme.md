@@ -153,6 +153,123 @@ npx playwright test tests/dbTests
 - Price range queries and stock updates.
 - Validating constraints and timestamps.
 
+
+## Workflow Overview (CI/CD)
+
+The workflow performs the following steps:
+
+1. **Checkout Code**: Checks out the repository code.
+2. **Set up Node.js**: Sets up Node.js using the latest LTS version.
+3. **Install Dependencies**: Installs the project dependencies using `npm ci`.
+4. **Install Playwright Browsers**: Installs the necessary Playwright browsers.
+5. **Set up Environment Variables**: Sets up the environment variables for the database connection.
+6. **Create Database Tables and Seed Data**: Runs a script to create database tables and seed data.
+7. **Run Playwright Tests**: Executes the Playwright tests.
+8. **Tear Down Database Tables and Data**: Runs a script to tear down the database tables and data.
+9. **Upload Playwright Test Reports**: Uploads the Playwright test reports as an artifact.
+
+### Environment Variables
+
+The following environment variables are required for the database connection and should be set as GitHub Secrets:
+
+- `DB_USER`: The database user.
+- `DB_HOST`: The database host.
+- `DB_NAME`: The database name.
+- `DB_PASSWORD`: The database password.
+- `DB_PORT`: The database port.
+
+### Workflow File
+
+Below is the complete workflow file (`.github/workflows/playwright.yml`):
+
+```yaml
+name: Playwright Database Testing
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+        ports:
+          - 5432:5432
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v4
+
+      # Set up Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Install Playwright browsers
+      - name: Install Playwright Browsers
+        run: npx playwright install
+
+      # Set up environment variables
+      - name: Set Environment Variables
+        run: echo "DB_USER=${{ secrets.DB_USER }}\nDB_HOST=${{ secrets.DB_HOST }}\nDB_NAME=${{ secrets.DB_NAME }}\nDB_PASSWORD=${{ secrets.DB_PASSWORD }}\nDB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+
+      # Create database tables and seed data
+      - name: Creates data tables and inserts data into tables
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+        run: npm run setup
+
+      # Run Playwright tests
+      - name: Run Playwright tests
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+        run: npx playwright test
+
+      # Tear down database tables and data
+      - name: Deletes the data table and their data
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+        run: npm run teardown
+
+      # Upload Playwright test reports
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+```
+
 ## Additional Information
 
 - Test results will be displayed in the console, and errors will highlight failed assertions.
