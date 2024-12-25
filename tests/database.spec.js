@@ -198,7 +198,7 @@ test(
       "Tablet",
     ]);
     expect(product[0].stock).toBe(15);
-    await runQuery(deleteFromProductsWhereEmailIsEqual, ["Tablet"]);
+    await runQuery(deleteFromProductsWhereNameIsEqual, ["Tablet"]);
   }
 );
 
