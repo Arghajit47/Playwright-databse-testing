@@ -1,6 +1,6 @@
 const { runQuery } = require("./utils/dbUtils");
-const createQuery = require("./testData/createSql");
-const insertQuery = require("./testData/insertSql");
+const createQuery = require("./sqlQueries/createSql");
+const insertQuery = require("./sqlQueries/insertSql");
 
 async function dataBaseSetup() {
   console.log("Create the database and create the table and data");
