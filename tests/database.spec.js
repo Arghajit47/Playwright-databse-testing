@@ -17,7 +17,7 @@ test(
       "john@example.com",
     ]);
     const user = await runQuery(
-      selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+      selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
       ["john@example.com"]
     );
     expect(user[0].name).toBe("John Doe");
@@ -40,7 +40,7 @@ test(
       "Jane Doe",
     ]);
     const user = await runQuery(
-      selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+      selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
       ["jane.doe@example.com"]
     );
     expect(user[0].name).toBe("Jane Doe");
@@ -56,12 +56,12 @@ test("Delete a user by ID and verify", { tag: ["@database"] }, async () => {
     "alice@example.com",
   ]);
   const user = await runQuery(
-    selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+    selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
     ["alice@example.com"]
   );
   await runQuery(deleteSqlQuery.deleteFromUsersWhereIdIsEqual, [user[0].id]);
   const deletedUser = await runQuery(
-    selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+    selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
     ["alice@example.com"]
   );
   expect(deletedUser.length).toBe(0);
@@ -107,7 +107,7 @@ test("Retrieve users by email domain", { tag: ["@database"] }, async () => {
     "tester@example.com",
   ]);
   const users = await runQuery(
-    selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailLike,
+    selectSqlQuery.selectAllFromUsersWhereEmailLike,
     ["%@example.com"]
   );
   expect(users.length).toBeGreaterThan(0);
@@ -141,7 +141,7 @@ test(
       "user2@example.com",
     ]);
     const users = await runQuery(
-      selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIn,
+      selectSqlQuery.selectAllFromUsersWhereEmailIn,
       ["user1@example.com", "user2@example.com"]
     );
     expect(users.length).toBe(2);
@@ -175,7 +175,7 @@ test(
       "timestamp@example.com",
     ]);
     const user = await runQuery(
-      selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+      selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
       ["timestamp@example.com"]
     );
     expect(new Date(user[0].created_at)).toBeInstanceOf(Date);
@@ -452,7 +452,7 @@ test(
     ]);
 
     const user = await runQuery(
-      selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+      selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
       ["tester@example.com"]
     );
     const product = await runQuery(
@@ -493,7 +493,7 @@ test(
     }
 
     const user = await runQuery(
-      selectSqlQuery.selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
+      selectSqlQuery.selectAllFromUsersWhereEmailIsEqual,
       ["rollback@example.com"]
     );
     const product = await runQuery(
